@@ -12,7 +12,8 @@ GitHub repository: [nbhaskar76/genai_sample](https://github.com/nbhaskar76/genai
 
 ```
 genai_sample/
-└── streamlite_chatbot/
+└── terminal_chatbot/
+    ├── streamlit.py
     ├── chat.py
     ├── requirements.txt
     └── README.md
@@ -73,15 +74,7 @@ Make sure Ollama is installed and running. Then pull the TinyLlama model: The mo
 ```
 ## ▶️ Run the Chatbot
 
-- Run the chatbot script:
+- Run the chatbot :
 ```
-    python chat.py
-```
-- Example session:
-
-```
-    Chat with TinyLlama! Type 'exit' to quit.
-
-    You: Hello, TinyLlama!
-    TinyLlama: Hello! How can I assist you today?
+    streamlit run streamlit_app.py
 ```
