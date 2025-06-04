@@ -1,4 +1,4 @@
-# 🦙 TinyLlama Terminal Chatbot (via Ollama API)
+# 🦙 LLM Terminal Chatbot (via Ollama API)
 
 This project provides an interactive terminal-based chatbot powered by [TinyLlama](https://ollama.com/library/tinyllama), running locally using [Ollama](https://ollama.com) and accessed through Python's HTTP API.
 
@@ -35,31 +35,31 @@ genai_sample/
 ## ⚙️ Setup Instructions
 
 1. Clone the Repository
-   
+
 ```
-    git clone https://github.com/nbhaskar76/genai_sample.git
-    cd genai_sample/terminal_chatbot
+git clone https://github.com/nbhaskar76/genai_sample.git
+cd genai_sample/terminal_chatbot
 ```
 2. Create a Python Virtual Environment
 
 ```
-    python -m venv .venv
+python -m venv .venv
 ```
 
 3. Activate the Virtual Environment
 
 - Windows CMD:
 ```
-    .venv\Scripts\activate
+.venv\Scripts\activate
 ```
 - On Windows (PowerShell)
 
 ```
-    .\.venv\Scripts\Activate.ps1
+.\.venv\Scripts\Activate.ps1
 ```
 - On macOS / Linux
 ```
-    source .venv/bin/activate
+source .venv/bin/activate
 ```
 4. Select the Python Interpreter in VS Code
 - Open VS Code.
@@ -70,32 +70,30 @@ genai_sample/
 5. Install Dependencies
 - Install required Python packages using:
 ```
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## 🤖 Download the Model with Ollama
 Make sure Ollama is installed and running. Then pull the TinyLlama model: The model can be changed as per our need.
 ```
-    ollama pull tinyllama
+ollama pull tinyllama
 ```
 ## ▶️ Run the Chatbot via terminal
 
 - Run the chatbot script:
 ```
-    python terminal_chat/terminal_chat.py
+python terminal_chat/terminal_chat.py
 ```
 - Example session:
 
-```
-    Chat with TinyLlama! Type 'exit' to quit.
+Chat with TinyLlama! Type 'exit' to quit.
 
-    You: Hello, TinyLlama!
-    TinyLlama: Hello! How can I assist you today?
-```
+You: Hello, TinyLlama!
+TinyLlama: Hello! How can I assist you today?
 
 ## ▶️ Run the Chatbot via Streamlit App
 
 - Run the chatbot :
 ```
-    streamlit run streamlit_chat/streamlit_chat.py
+streamlit run streamlit_chat/streamlit_chat.py
 ```

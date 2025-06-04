@@ -22,7 +22,7 @@ def submit():
     user_input = st.session_state.user_input_widget_key # Use the key from the chat_input/text_input
 
     if user_input:
-        reply, updated_history = chat_with_llm(user_input, st.session_state.history)
+        reply, updated_history = chat_with_llm(user_input, st.session_state.history, True)
         st.session_state.history = updated_history
         # Clear the input field by setting the dedicated session state variable
         st.session_state.user_input_value = "" # This is the crucial line to clear the input

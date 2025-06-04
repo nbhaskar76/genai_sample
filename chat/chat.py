@@ -9,8 +9,9 @@ dotenv.load_dotenv()
 MODEL = os.getenv("MODEL")
 OLLAMA_URL = os.getenv("OLLAMA_URL")
 
-# --- REVISED MATH_SYSTEM_PROMPT WITH MORE EXPLICIT EXAMPLES ---
-MATH_SYSTEM_PROMPT = """You are a highly specialized and **STRICTLY MATHEMATICAL** assistant.
+# Base system prompt for math-only interactions
+# This will be extended if markdown formatting is requested.
+MATH_SYSTEM_PROMPT_BASE = """You are a highly specialized and **STRICTLY MATHEMATICAL** assistant.
 Your **ABSOLUTE SOLE PURPOSE** is to answer questions that are *purely and explicitly* related to mathematics. This includes arithmetic, algebra, geometry, calculus, statistics, mathematical logic, and other quantifiable or abstract mathematical concepts.
 
 **CRITICAL RULE:**
@@ -21,40 +22,49 @@ Your **ABSOLUTE SOLE PURPOSE** is to answer questions that are *purely and expli
     * "My function is strictly limited to mathematics. I'm unable to assist with that inquiry."
     * "That question falls outside my mathematical domain. I can only provide mathematical assistance."
 
-**Examples of strict adherence:**
+Output Guideliness:
 
-User: What is 5 + 3?
-Assistant: 5 + 3 = 8.
+1. If user prompt is a math problem, then provide the response in 3 sections.  
+    Question : Rewrite the question with complete understanding
+    Answer : Provide direct answer
+    Explanation: Detail out the steps with explanation
 
-User: Tell me about the history of mathematics.
-Assistant: I specialize solely in mathematical questions. Please ask me a math-related question.
-
-User: What is the distance between the Sun and Earth?
-Assistant: My function is strictly limited to mathematics. I'm unable to assist with that inquiry.
-
-User: Solve for x: 3x - 7 = 8
-Assistant: 3x - 7 = 8
-3x = 15
-x = 5.
-
-User: What is the compound of water?
-Assistant: That question falls outside my mathematical domain. I can only provide mathematical assistance.
-
-User: How many types of triangles are there?
-Assistant: There are three main types of triangles based on their sides: equilateral, isosceles, and scalene. Based on their angles, there are acute, right, and obtuse triangles.
-
-User: What is the capital of France?
-Assistant: I specialize solely in mathematical questions. Please ask me a math-related question.
+2. For Other types, you can respond on your own.
 
 **You must prioritize strict adherence to this domain limitation.** Do not deviate from these rules or provide any information outside of pure mathematics.
-"""
-# --- END REVISED MATH_SYSTEM_PROMPT ---
 
-def chat_with_llm(prompt, history=None):
+"""
+
+def chat_with_llm(prompt, history=None, enable_markdown_output=False):
+    """
+    Interacts with the LLM, enforcing a math-only persona.
+
+    Args:
+        user_input (str): The user's current message.
+        chat_history (list): A list of previous messages in the format
+                             [{"role": "user", "content": "..."}]
+        enable_markdown_output (bool): If True, the LLM will be prompted to
+                                       format its response using Markdown.
+
+    Returns:
+        tuple[str, list]: The LLM's reply and the updated chat history.
+    """
     history = history or []
 
+    # Construct the system prompt for the current interaction
+    current_system_prompt = MATH_SYSTEM_PROMPT_BASE
+
+    # If markdown output is enabled, add a specific instruction to the system prompt
+    if enable_markdown_output:
+        current_system_prompt += (
+            "\n\n**IMPORTANT:** Format your responses concisely and use Markdown for readability. "
+            "Use bold (`**text**`) for emphasis, code blocks for equations (````python print('math') ````), "
+            "and ensure double newlines (`\\n\\n`) between paragraphs for proper formatting."
+        )
+
+    # Construct the messages list to send to Ollama
     messages_to_send = [
-        {"role": "system", "content": MATH_SYSTEM_PROMPT}
+        {"role": "system", "content": current_system_prompt}
     ] + history + [
         {"role": "user", "content": prompt}
     ]
@@ -78,12 +88,15 @@ def chat_with_llm(prompt, history=None):
             if line:
                 try:
                     chunk = json.loads(line.decode("utf-8"))
+                    # Concatenate content from streamed chunks
                     assistant_reply += chunk.get("message", {}).get("content", "")
                 except json.JSONDecodeError:
+                    # Skip lines that are not valid JSON (e.g., keep-alive pings)
                     continue
     except Exception as e:
         return f"❌ Error reading response: {e}", history
 
+    # Update history for the next turn
     updated_history = history + [
         {"role": "user", "content": prompt},
         {"role": "assistant", "content": assistant_reply}
