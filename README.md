@@ -91,6 +91,7 @@ Make sure Ollama is installed and running. Then pull the TinyLlama model: The mo
 
     You: Hello, TinyLlama!
     TinyLlama: Hello! How can I assist you today?
+```
 
 ## ▶️ Run the Chatbot via Streamlit App
 
